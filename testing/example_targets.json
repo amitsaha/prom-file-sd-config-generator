@@ -1,0 +1,26 @@
+[
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/brightwrite/bq/pricingpolicyitem1"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/brightwrite/bq/pricingpolicyitem2"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/brightwrite/bq/pricingpolicyitem3"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/brightwrite/bq/pricingpolicyitem4"
+    }
+  }
+]
