@@ -80,7 +80,7 @@ func main() {
 			} else {
 				defer resp.Body.Close()
 			}
-			// Create a goquery document from the HTTP response
+
 			document, err := goquery.NewDocumentFromReader(resp.Body)
 			if err != nil {
 				log.Print("Error loading HTTP response body", err)
