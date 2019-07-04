@@ -63,4 +63,4 @@ The generated file SD config will be:
 
 ## LICENSE
 
-MIT (See [LICENSE](./LICENSE))
+Apache (See [LICENSE](./LICENSE))
