@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,22 +20,7 @@ type Target struct {
 	Labels  map[string]string `json:"labels"`
 }
 
-var targetLinks []*url.URL
-
-func processElement(index int, element *goquery.Selection) {
-
-	link, exists := element.Attr("href")
-	if exists {
-		parsedUrl, err := url.Parse(link)
-		if err != nil {
-			log.Printf("Error parsing %s", link, err)
-		}
-		targetLinks = append(targetLinks, parsedUrl)
-	}
-
-}
-
-func generateFileSdConfig() {
+func generateFileSdConfig(targetLinks []*url.URL, fileSdConfigPath string) {
 
 	var targets []Target
 
@@ -48,7 +34,7 @@ func generateFileSdConfig() {
 	}
 
 	d, _ := json.Marshal(targets)
-	file, err := os.Create("file_sd_targets.json")
+	file, err := os.Create(fileSdConfigPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,38 +48,62 @@ func generateFileSdConfig() {
 
 }
 
+func getTargetLinks(client *http.Client, req *http.Request) []*url.URL {
+	var targetLinks []*url.URL
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Print(err)
+		return targetLinks
+	} else {
+		defer resp.Body.Close()
+	}
+
+	document, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		log.Print("Error loading HTTP response body", err)
+	}
+
+	if resp.StatusCode != 200 {
+		log.Printf("Got back non-200 response code: %d", resp.StatusCode)
+	}
+
+	document.Find("a").Each(func(index int, element *goquery.Selection) {
+		link, exists := element.Attr("href")
+		if exists {
+			parsedURL, err := url.Parse(link)
+			if err != nil {
+				log.Printf("Error parsing %s: %s", link, err)
+			}
+			targetLinks = append(targetLinks, parsedURL)
+		}
+	})
+
+	return targetLinks
+}
+
 func main() {
 
-	req, err := http.NewRequest("GET", os.Args[1], nil)
+	targetScrapeURL := flag.String("target-source", "", "HTTP URL of the target source")
+	targetScrapeInterval := flag.Int64("scrape-interval", 5, "Interval in seconds between consecutive scrapes")
+	fileSdConfigPath := flag.String("config-path", "./file_sd_config.json", "Path of the SD config JSON file")
+
+	flag.Parse()
+
+	if len(*targetScrapeURL) == 0 {
+		flag.Usage()
+		log.Fatal("Please specify target-source")
+	}
+
+	req, err := http.NewRequest("GET", *targetScrapeURL, nil)
 	if err != nil {
 		log.Fatal("Error creating HTTP client", err)
 	}
 	client := &http.Client{}
-
-	ticker := time.NewTicker(5000 * time.Millisecond)
+	ticker := time.NewTicker(time.Duration(*targetScrapeInterval) * time.Second)
 	go func() {
 		for range ticker.C {
-			resp, err := client.Do(req)
-			if err != nil {
-				log.Print(err)
-				continue
-			} else {
-				defer resp.Body.Close()
-			}
-
-			document, err := goquery.NewDocumentFromReader(resp.Body)
-			if err != nil {
-				log.Print("Error loading HTTP response body", err)
-			}
-
-			if resp.StatusCode != 200 {
-				log.Printf("Got back non-200 response code: %s", resp.StatusCode)
-			}
-
-			document.Find("a").Each(processElement)
-			generateFileSdConfig()
-
-			targetLinks = targetLinks[:0]
+			targetLinks := getTargetLinks(client, req)
+			generateFileSdConfig(targetLinks, *fileSdConfigPath)
 		}
 	}()
 
