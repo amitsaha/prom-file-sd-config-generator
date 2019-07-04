@@ -1,0 +1,5 @@
+prom-sd-config-generator
+  build:
+    image: amitsaha/prom-sd-config-generator
+    context: .
+    dockerfile: Dockerfile
