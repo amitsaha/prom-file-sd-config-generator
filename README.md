@@ -1,5 +1,7 @@
 # Prometheus File SD config generator
 
+[![Build Status](https://travis-ci.org/amitsaha/prom-file-sd-config-generator.svg?branch=master)](https://travis-ci.org/amitsaha/prom-file-sd-config-generator)
+
 This is a utility program which will generate a file SD config (in JSON) for Prometheus
 given a target HTTP URL which has a list of the different targets to scrape.
 
