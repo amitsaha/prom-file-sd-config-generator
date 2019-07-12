@@ -80,7 +80,8 @@ A scenario which motivated this utility is depicted below:
 
 The custom metrics engine acts as the target registry as well as having a metrics engine
 which calculates custom metrics and then exports them as prometheus metrics using a language
-specific prometheus client.
+specific prometheus client. The engine responds to a `HTTP GET /` request with a HTML page
+containing the hyperlinks of all the different HTTP handlers it exports metrics on.
 
 ## Usage
 
@@ -98,39 +99,8 @@ Usage of ./prom-file-sd-config:
 ```
 
 The only required argument is the `target-source` which is the HTTP resource which acts
-as the centralized repository of the targets. An example of such a page is:
-
-```
-<a href="http://127.0.0.1:9100/bar1/metrics">target1</a>
-<a href="http://127.0.0.1:9100/bar2/metrics">target2</a>
-<a href="http://127.0.0.1:9100/bar3">target3</a>
-```
-
-The generated file SD config will be:
-
-```
-[
-  {
-    "targets": ["127.0.0.1:9100"],
-    "labels": {
-      "__metrics_path__": "/bar1/metrics"
-    }
-  },
-  {
-    "targets": ["127.0.0.1:9100"],
-    "labels": {
-      "__metrics_path__": "/bar2/metrics
-    }
-  },
-  {
-    "targets": ["127.0.0.1:9100"],
-    "labels": {
-      "__metrics_path__": "/bar3"
-    }
-  }
-]
-
-```
+as the centralized repository of the targets. This URL must respond to a GET request with
+a response such as that shown [here](./sample_configs/index.html).
 
 ## Development
 
