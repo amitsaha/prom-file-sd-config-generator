@@ -4,7 +4,6 @@ services:
   - docker
 
 before_install:
+  - go test -v
   - docker build -t amitsaha/prom-file-sd-config-generator .
 
-script:
-  - docker images

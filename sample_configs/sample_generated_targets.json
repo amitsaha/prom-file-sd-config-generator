@@ -1,0 +1,26 @@
+[
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem1"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem2"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem3"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem4"
+    }
+  }
+]

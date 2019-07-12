@@ -15,12 +15,13 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+// Target represents a scraping target
 type Target struct {
 	Targets []string          `json:"targets"`
 	Labels  map[string]string `json:"labels"`
 }
 
-func generateFileSdConfig(targetLinks []*url.URL, fileSdConfigPath string) {
+func generateFileSdConfig(targetLinks []*url.URL) []byte {
 
 	var targets []Target
 
@@ -33,7 +34,11 @@ func generateFileSdConfig(targetLinks []*url.URL, fileSdConfigPath string) {
 		targets = append(targets, t)
 	}
 
-	d, _ := json.Marshal(targets)
+	d, _ := json.MarshalIndent(targets, "", "  ")
+	return d
+}
+
+func writeToFile(d []byte, fileSdConfigPath string) {
 	file, err := os.Create(fileSdConfigPath)
 	if err != nil {
 		log.Fatal(err)
@@ -103,7 +108,8 @@ func main() {
 	go func() {
 		for range ticker.C {
 			targetLinks := getTargetLinks(client, req)
-			generateFileSdConfig(targetLinks, *fileSdConfigPath)
+			b := generateFileSdConfig(targetLinks)
+			writeToFile(b, *fileSdConfigPath)
 		}
 	}()
 

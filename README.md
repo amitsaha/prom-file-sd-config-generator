@@ -63,6 +63,15 @@ The generated file SD config will be:
 
 ```
 
+## Development
+
+Run tests:
+
+1. Start a fake http server serving URLs for sraping
+2. Utility scrapes it, and generates a JSON file
+3. Test reads the JSON file and verifies it has the expected data
+
+
 ## Deployment
 
 ## LICENSE

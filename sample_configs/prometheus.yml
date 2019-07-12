@@ -5,4 +5,4 @@ scrape_configs:
   - job_name: 'test'
     file_sd_configs:
       - files:
-        - file_sd_targets.json
+        - sample_generated_targets.json
