@@ -7,7 +7,10 @@ services:
  - docker
 
 before_install:
-  - go build
-  - go test -v
+  - GO111MODULE=on go build
+  - GO111MODULE=on go test -v
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t amitsaha/prom-file-sd-config-generator .
+  - docker tag amitsaha/prom-file-sd-config-generator $DOCKER_USERNAME/prom-file-sd-config-generator
+  - docker push $DOCKER_USERNAME/prom-file-sd-config-generator
 
