@@ -65,14 +65,22 @@ The generated file SD config will be:
 
 ## Development
 
-Run tests:
-
-1. Start a fake http server serving URLs for sraping
-2. Utility scrapes it, and generates a JSON file
-3. Test reads the JSON file and verifies it has the expected data
-
+```
+$ go test -v
+```
 
 ## Deployment
+
+A docker image is available on [docker hub](https://hub.docker.com/r/amitsaha/prom-file-sd-config-generator).
+You can use the `Dockerfile` to build one yourself. The `ENTRYPOINT` is set to the binary, so you only
+need to specify the options above.
+
+In a VM world, you could deploy it alongside your prometheus server as a separate container or
+use a systemd service to run the binary.
+
+In a kubernetes world, you could run this in the same pod as your prometheus server so that they have a common
+volume, or of course, you could deploy it as it's own pod with a shared volume with the prometheus server.
+Write permissions are needed.
 
 ## LICENSE
 
