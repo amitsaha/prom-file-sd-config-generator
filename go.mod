@@ -1,4 +1,4 @@
-module github.com/amitsaha/prom-file-sd-config
+module github.com/amitsaha/prom-file-sd-config-generator
 
 go 1.12
 
