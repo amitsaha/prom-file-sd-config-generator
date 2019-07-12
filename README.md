@@ -5,13 +5,82 @@
 This is a utility program which will generate a file SD config (in JSON) for Prometheus
 given a target HTTP URL which has a list of the different targets to scrape.
 
+## Background
+
 If your infrastructure has a large number of targets which you cannot specify via one
-of the prometheus service discovery mechanisms, you need to resort to use the file SD
-config. However, manually editing the manually SD config is a chore especially
-when you have a growing number of such targets. Why not have a centralized list of
-these targets and then generate the file SD config? And once you have the list centralized,
-you can add any new target to it and this program will automatically generate a new file SD config
-which will have the new target for prometheus to scrape.
+of the prometheus service discovery mechanisms, you need to resort to specifying each
+target in the `prometheus` configuration file. However, manually editing the config file
+for every new target is a chore especially when you have a growing number of such targets.
+A simple approach in this case without making any other assumptions about your
+infrastructure is to use the file based target discovery 
+mechanism. Your prometheus configuration file doesn't need to be updated for adding a new
+target this way. 
+
+Continuing with our assumption that we have a large number of such targets, we further
+want a simple mechanism to update the file containing these targets. To this end, why not 
+have a centralized list of these targets and then generate the file SD config from this? 
+Once you have the list centralized, you can add any new target to it and this generator 
+program will automatically generate a new file SD config with any new targets.
+
+This project aims to be this generator - when you give it a HTTP URL containing a list of these
+targets as hyperlinks, it will parse them and generate the file SD config. Let's consider an example.
+
+Given a HTTP server which serves the following HTML:
+
+```
+<a href="http://127.0.0.1:9100/metrics/testitem1">target1</a>
+<a href="http://127.0.0.1:9200/metrics/testitem2">target2</a>
+<a href="http://127.0.0.1:9300/metrics/testitem3">target3</a>
+```
+
+`prom-file-sd-config-generator` will create a file containing the targets as follows:
+
+```
+[
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem1"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem2"
+    }
+  },
+  {
+    "targets": ["127.0.0.1:21500"],
+    "labels": {
+      "__metrics_path__": "/metrics/testitem3"
+    }
+  }
+]
+
+```
+
+The `prometheus` config will be as follows:
+
+```
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s 
+scrape_configs: 
+....
+  - job_name: 'test'
+    file_sd_configs:
+      - files:
+        - sample_generated_targets.json
+....
+```
+
+A scenario which motivated this utility is depicted below:
+
+![Scenario](./prometheus_sd_config_generator.png)
+
+The custom metrics engine acts as the target registry as well as having a metrics engine
+which calculates custom metrics and then exports them as prometheus metrics using a language
+specific prometheus client.
 
 ## Usage
 
@@ -84,4 +153,4 @@ Write permissions are needed.
 
 ## LICENSE
 
-Apache (See [LICENSE](./LICENSE))
+Apache 2.0 (See [LICENSE](./LICENSE))
