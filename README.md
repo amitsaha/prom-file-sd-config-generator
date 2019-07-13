@@ -1,11 +1,21 @@
 # Prometheus File SD config generator
 
-[![Build Status](https://travis-ci.org/amitsaha/prom-file-sd-config-generator.svg?branch=master)](https://travis-ci.org/amitsaha/prom-file-sd-config-generator)
+[![Build Status](https://travis-ci.org/amitsaha/prom-file-sd-config-generator.svg?branch=master)](https://travis-ci.org/amitsaha/prom-file-sd-config-generator) [![](https://images.microbadger.com/badges/image/amitsaha/prom-file-sd-config-generator.svg)](https://microbadger.com/images/amitsaha/prom-file-sd-config-generator "Get your own image badge on microbadger.com")
 
 This is a utility program which will generate a file SD config (in JSON) for Prometheus
 given a target HTTP URL which has a list of the different targets to scrape.
 
-## Background
+# Table of Contents
+
+  * [Description](#description)
+  * [Motivation](#motivation)
+  * [Usage](#usage)
+  * [Deployment](#deployment)
+  * [Development](#development)
+  * [License](#license)
+  
+
+## Description
 
 If your infrastructure has a large number of targets which you cannot specify via one
 of the prometheus service discovery mechanisms, you need to resort to specifying each
@@ -74,7 +84,9 @@ scrape_configs:
 ....
 ```
 
-A scenario which motivated this utility is depicted below:
+## Motivation
+
+A scenario which originally motivated this utility is depicted below:
 
 ![Scenario](./prometheus_sd_config_generator.png)
 
@@ -109,11 +121,6 @@ The only required argument is the `target-source` which is the HTTP resource whi
 as the centralized repository of the targets. This URL must respond to a GET request with
 a response such as that shown [here](./sample_configs/index.html).
 
-## Development
-
-```
-$ go test -v
-```
 
 ## Deployment
 
@@ -128,6 +135,16 @@ In a kubernetes world, you could run this in the same pod as your prometheus ser
 volume, or of course, you could deploy it as it's own pod with a shared volume with the prometheus server.
 Write permissions are needed.
 
-## LICENSE
+## Development
+
+This project is written in Golang 1.12 making use of Go modules.
+
+```
+$ git clone ..
+$ go build
+$ go test -v
+```
+
+## License
 
 Apache 2.0 (See [LICENSE](./LICENSE))
