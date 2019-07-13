@@ -83,6 +83,13 @@ which calculates custom metrics and then exports them as prometheus metrics usin
 specific prometheus client. The engine responds to a `HTTP GET /` request with a HTML page
 containing the hyperlinks of all the different HTTP handlers it exports metrics on.
 
+Note how we have multiple independent prometheus registries in the same engine. This can be 
+useful in circumstances where your metric calculation is expensive and having a single endpoint 
+for all the metrics can lead to slow scrape responses. Of course, we could update our metrics 
+asynchronously without much hassle, and if you have done that, this utility doesn't need to be 
+used.
+
+
 ## Usage
 
 The program has three options (two of them optional):
